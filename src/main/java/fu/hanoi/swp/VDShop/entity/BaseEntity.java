@@ -19,7 +19,7 @@ public abstract class BaseEntity {
     @Id
     @Size(max = 36)
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false, length = 36)
+    @Column(name = "id",columnDefinition ="char(36)", nullable = false, length = 36)
     private String id;
 
     @ColumnDefault("CURRENT_TIMESTAMP")

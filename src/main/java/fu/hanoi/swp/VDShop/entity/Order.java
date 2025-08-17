@@ -30,9 +30,7 @@ public class Order extends BaseEntity {
     private BigDecimal totalAmount;
 
     @NotNull
-    @ColumnDefault("'pending'")
-    @Lob
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 50)
     private String status;
 
     @OneToMany(mappedBy = "order")
