@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private T data;
+    private boolean isSuccess;
     private int code=200;
     private String message="success";
     private LocalDateTime timestamp = LocalDateTime.now();

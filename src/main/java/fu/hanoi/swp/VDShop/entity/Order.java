@@ -29,9 +29,6 @@ public class Order extends BaseEntity {
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
-    @NotNull
-    @Column(name = "status", nullable = false, length = 50)
-    private String status;
 
     @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems = new LinkedHashSet<>();

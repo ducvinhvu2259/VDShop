@@ -2,6 +2,7 @@ package fu.hanoi.swp.VDShop.service.impl;
 
 import fu.hanoi.swp.VDShop.config.JwtTokenProvider;
 import fu.hanoi.swp.VDShop.dto.auth.request.LoginRequest;
+import fu.hanoi.swp.VDShop.dto.auth.request.RegisterRequest;
 import fu.hanoi.swp.VDShop.dto.auth.response.AuthResponse;
 import fu.hanoi.swp.VDShop.entity.User;
 import fu.hanoi.swp.VDShop.exception.AppException;
@@ -16,7 +17,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
     JwtTokenProvider tokenProvider;
     UserRepository userRepository;
     AuthenticationManager authenticationManager;
-
+    PasswordEncoder passwordEncoder;
     @Override
     public AuthResponse login(LoginRequest loginRequest) {
         try {
@@ -38,11 +41,11 @@ public class AuthServiceImpl implements AuthService {
                             loginRequest.getPassword()
                     )
             );
-            String email = loginRequest.getUsername();
-            User user = userRepository.findUserByEmail(email);
+            String username = loginRequest.getUsername();
+            User user = userRepository.findUserByUsername(username);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenProvider.generateToken(authentication, user.getFullName());
+            String jwt = tokenProvider.generateToken(authentication);
 
 
             List<String> roles = authentication.getAuthorities().stream()
@@ -56,7 +59,24 @@ public class AuthServiceImpl implements AuthService {
                     .build();
 
         } catch (Exception e) {
-            throw new AppException(ErrorCode.USER_NOT_FOUND);
+            System.out.println(e.getMessage());
         }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public void register(RegisterRequest registerRequest) {
+        if (userRepository.findUserByEmail(registerRequest.getEmail()) != null)
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if (userRepository.findUserByUsername(registerRequest.getUsername()) != null)
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        User user = new User();
+        user.setUsername(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
+        user.setFisrtName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
+        userRepository.saveAndFlush(user);
     }
 }

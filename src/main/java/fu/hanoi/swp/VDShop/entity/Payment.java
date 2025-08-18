@@ -27,10 +27,6 @@ public class Payment extends BaseEntity {
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @NotNull
-    @Lob
-    @Column(name = "status", nullable = false)
-    private String status;
 
     @Size(max = 255)
     @Column(name = "transaction_id")

@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         
         try {
-            fu.hanoi.swp.VDShop.entity.User user = userRepository.findUserByEmail(username);
+            fu.hanoi.swp.VDShop.entity.User user = userRepository.findUserByUsername(username);
             if (user == null) {
                 throw new UsernameNotFoundException("User not found with email: " + username);
             }

@@ -1,16 +1,12 @@
 package fu.hanoi.swp.VDShop.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,15 +18,28 @@ public abstract class BaseEntity {
     @Column(name = "id",columnDefinition ="char(36)", nullable = false, length = 36)
     private String id;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at")
-    private Instant createdAt;
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Timestamp createdAt;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "updated_at")
-    private Instant updatedAt;
+
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Timestamp updatedAt;
 
     @Size(max = 36)
     @Column(name = "modified_by", length = 36)
     private String modifiedBy;
+
+    @Column(name = "status")
+    private String status;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = Timestamp.valueOf(LocalDateTime.now());
+        this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
+    }
 }

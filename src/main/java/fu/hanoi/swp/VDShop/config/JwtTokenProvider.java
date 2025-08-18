@@ -1,7 +1,12 @@
 package fu.hanoi.swp.VDShop.config;
 
+import fu.hanoi.swp.VDShop.entity.User;
+import fu.hanoi.swp.VDShop.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,8 +20,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtTokenProvider {
 
+    final UserRepository  userRepository;
     @Value("${app.jwt-secret:VDShopSecretKey2024ForJWTTokenGenerationAndValidation}")
     private String jwtSecret;
 
@@ -30,7 +38,7 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(Authentication authentication, String lastName) {
+    public String generateToken(Authentication authentication) {
         if (authentication == null) {
             throw new IllegalArgumentException("Authentication cannot be null");
         }
@@ -38,14 +46,14 @@ public class JwtTokenProvider {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationInMs);
-
+        User user = userRepository.findUserByUsername(userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", userDetails.getUsername());
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
         claims.put("created", currentDate);
-        claims.put("lastName", lastName);
+        claims.put("name", user.getLastName());
         
         return Jwts.builder()
                 .setClaims(claims)

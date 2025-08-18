@@ -29,14 +29,10 @@ public class UserAddress extends BaseEntity {
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
-    @Size(max = 255)
-    @NotNull
-    @Column(name = "address_line_1", nullable = false)
-    private String addressLine1;
 
     @Size(max = 255)
-    @Column(name = "address_line_2")
-    private String addressLine2;
+    @Column(name = "No")
+    private String no;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -1,6 +1,9 @@
 package fu.hanoi.swp.VDShop.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -32,8 +35,17 @@ public class User extends BaseEntity {
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
+    @Column(name = "fisrt_name", nullable = false)
+    private String fisrtName;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Size(max = 255)
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
     @Size(max = 20)
     @Column(name = "phone_number", length = 20)
